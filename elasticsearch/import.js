@@ -15,20 +15,20 @@ fs.createReadStream('../911.csv')
       calls.push({
         index: {
           _index: '911-calls',
-          _type: 'calls',
-          _id: nb_calls
+          _type: 'calls'
         }
       });
 
       calls.push({
-        "loc" : { x: data.lat, y: data.lng },
+        "location" : { lat: data.lat, lon: data.lng },
         "desc": data.desc,
         "zip": data.zip,
         "title": data.title,
         "timeStamp": data.timeStamp,
         "twp": data.twp,
         "addr": data.addr,
-        "e": data.e
+        "e": data.e,
+        "type": getType(data.title)
       });
 
       nb_calls++;
@@ -51,3 +51,17 @@ fs.createReadStream('../911.csv')
         });
       });
     });
+
+function getType(title) {
+  if (title.indexOf('EMS', 0) != -1) {
+    return 'EMS';
+  }
+
+  if (title.indexOf('Traffic', 0) != -1) {
+    return 'Traffic';
+  }
+
+  if (title.indexOf('Fire', 0) != -1) {
+    return 'Fire';
+  }
+}

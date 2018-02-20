@@ -1,5 +1,26 @@
 # 911 Calls avec ElasticSearch
 
+## Création de l'index et du mapping
+Sous kibana entrer les commandes suivantes :
+
+```
+PUT 911-calls
+
+PUT /911-calls/calls/_mapping
+{ 
+  "calls": {
+    "properties": {
+      "location": {
+        "type": "geo_point"
+      },
+      "timestamp": {
+        "type": "date"
+      }
+    }
+  }
+}
+```
+
 ## Import du jeu de données
 
 Pour importer le jeu de données, complétez le script `import.js` (ici aussi, cherchez le `TODO` dans le code :wink:).
@@ -14,15 +35,36 @@ node import.js
 Vérifiez que les données ont été importées correctement grâce au shell (le nombre total de documents doit être `153194`) :
 
 ```
-GET <nom de votre index>/_count
+GET 911-calls/calls/_count
 ```
 
 ## Requêtes
 
-À vous de jouer ! Écrivez les requêtes ElasticSearch permettant de résoudre les problèmes posés.
-
+### Compter le nombre d'appels autour de Lansdale dans un rayon de 500 mètres
 ```
-TODO : ajouter les requêtes ElasticSearch ici
+GET /911-calls/calls/_search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match_all": {}
+      },
+      "filter": {
+        "geo_distance": {
+          "distance": "500m",
+          "location": {
+            "lat": 40.241493,
+            "lon": -75.283783
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Compter le nombre d'appels par catégorie
+```
 ```
 
 ## Kibana
