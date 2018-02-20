@@ -35,6 +35,40 @@ Afin de répondre aux différents problèmes, vous allez avoir besoin de créer 
 TODO : ajouter les requêtes MongoDB ici
 ```
 
+Créations des index :
+
+2sphere:
+```
+db.calls.ensureIndex({loc:"2dsphere"})
+```
+
+text:
+```
+db.calls.createIndex( { title: "text" } )
+```
+
+1) Requête
+```
+db.calls.count( { loc :     { $near :     { $geometry :     { type : "Point" ,         coordinates : [ -75.283783 , 40.241493] } ,         $maxDistance : 500     } } } )
+```
+
+2) Requêtes
+```
+db.calls.count({title: /.*EMS:.*/})
+db.calls.count({title: /.*Fire:.*/})
+db.calls.count({title: /.*Traffic:.*/})
+```
+
+3) Requête
+```
+db.calls.aggregate([{$group:{_id : { month: { $month: "$timeStamp" }, year: { $year: "$timeStamp" } }, nombre:{$sum:1} } } ]);
+```
+
+4) Requête
+```
+db.calls.aggregate(    [      { $match: { $text: { $search: "OVERDOSE" } } },      { $group: { _id: "$twp", total: { $sum: 1 } } }, { $sort : { total : -1 } }, { $limit: 3 }    ] )
+```  
+
 Vous allez sûrement avoir besoin de vous inspirer des points suivants de la documentation :
 
 * Proximity search : https://docs.mongodb.com/manual/tutorial/query-a-2dsphere-index/#proximity-to-a-geojson-point
