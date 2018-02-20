@@ -12,19 +12,30 @@ var insertCalls = function(db, callback) {
     fs.createReadStream('../911.csv')
         .pipe(csv())
         .on('data', data => {
-            var call = {}; // TODO créer l'objet call à partir de la ligne
-            calls.push(call);
-        })
-        .on('end', () => {
-          collection.insertMany(calls, (err, result) => {
-            callback(result)
-          });
+        // TODO créer l'objet call à partir de la ligne
+        const call = {
+             "loc" : { x: data.lat, y: data.lng },
+            "desc": data.desc,
+            "zip": data.zip,
+            "title": data.title,
+            "timeStamp": data.timeStamp,
+            "twp": data.twp,
+            "addr": data.addr,
+            "e": data.e
+        };
+        calls.push(call);
+    })
+    .on('end', () => {
+        collection.insertMany(calls, (err, result) => {
+            callback(result);
+            console.log(result)
         });
+    });
 }
 
 MongoClient.connect(mongoUrl, (err, db) => {
     insertCalls(db, result => {
-        console.log(`${result.insertedCount} calls inserted`);
-        db.close();
-    });
+    console.log(`${result.insertedCount} calls inserted`);
+db.close();
+});
 });
