@@ -28,7 +28,8 @@ fs.createReadStream('../911.csv')
         "twp": data.twp,
         "addr": data.addr,
         "e": data.e,
-        "type": getType(data.title)
+        "type": getType(data.title),
+        "month": data.timeStamp.split('-')[1].trim() + "/" + data.timeStamp.split('-')[0].trim()
       });
 
       nb_calls++;
@@ -53,15 +54,7 @@ fs.createReadStream('../911.csv')
     });
 
 function getType(title) {
-  if (title.indexOf('EMS', 0) != -1) {
-    return 'EMS';
-  }
-
-  if (title.indexOf('Traffic', 0) != -1) {
-    return 'Traffic';
-  }
-
-  if (title.indexOf('Fire', 0) != -1) {
-    return 'Fire';
-  }
+  var type = title.split(':')[0];
+  
+  return type;
 }
